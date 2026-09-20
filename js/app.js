@@ -1,5 +1,3 @@
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const products = getAllProducts();
 
@@ -30,14 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   gridEl.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-product-id]");
-    if (!btn) return;
-    viewProduct(btn.dataset.productId);
+    if (btn) viewProduct(btn.dataset.productId);
   });
 
   recentlyViewedList.addEventListener("click", (e) => {
     const chip = e.target.closest("[data-product-id]");
-    if (!chip) return;
-    viewProduct(chip.dataset.productId);
+    if (chip) viewProduct(chip.dataset.productId);
   });
 
   clearHistoryBtn.addEventListener("click", () => {
@@ -85,12 +81,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   suggestionList.addEventListener("click", (e) => {
     const li = e.target.closest("[data-product-id]");
-    if (!li) return;
-    const product = products.find((p) => p.id === li.dataset.productId);
-    if (!product) return;
-    searchInput.value = product.name;
-    suggestionList.hidden = true;
-    viewProduct(product.id);
+    if (li) {
+      const product = products.find((p) => p.id === li.dataset.productId);
+      if (product) {
+        searchInput.value = product.name;
+        suggestionList.hidden = true;
+        viewProduct(product.id);
+      }
+    }
   });
 
   document.addEventListener("click", (e) => {

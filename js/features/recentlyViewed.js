@@ -1,5 +1,3 @@
-
-
 const RecentlyViewed = (function () {
   const MAX_HISTORY = 5;
 
@@ -35,7 +33,6 @@ const RecentlyViewed = (function () {
     const existing = map.get(productId);
 
     if (existing) {
-
       if (existing !== head) {
         detach(existing);
         attachToFront(existing);

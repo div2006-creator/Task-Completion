@@ -1,5 +1,3 @@
-
-
 const Autocomplete = (function () {
   const MAX_SUGGESTIONS = 5;
 
@@ -14,8 +12,7 @@ const Autocomplete = (function () {
   function insertWord(word, productId) {
     if (!word) return;
     let node = root;
-    const normalized = word.toLowerCase();
-    for (const ch of normalized) {
+    for (const ch of word.toLowerCase()) {
       if (!node.children[ch]) node.children[ch] = new TrieNode();
       node = node.children[ch];
       node.productIds.add(productId);
@@ -26,17 +23,12 @@ const Autocomplete = (function () {
     root = new TrieNode();
     productsById = new Map();
 
-    for (const product of products) {
-      productsById.set(product.id, product);
-
-      insertWord(product.name, product.id);
-      for (const word of product.name.split(/\s+/)) {
-        insertWord(word, product.id);
-      }
-      insertWord(product.brand, product.id);
-      for (const tag of product.tags || []) {
-        insertWord(tag, product.id);
-      }
+    for (const p of products) {
+      productsById.set(p.id, p);
+      insertWord(p.name, p.id);
+      p.name.split(/\s+/).forEach((w) => insertWord(w, p.id));
+      insertWord(p.brand, p.id);
+      (p.tags || []).forEach((t) => insertWord(t, p.id));
     }
   }
 
@@ -51,9 +43,7 @@ const Autocomplete = (function () {
     }
 
     const matches = Array.from(node.productIds).map((id) => productsById.get(id));
-
     matches.sort((a, b) => b.rating * b.reviews - a.rating * a.reviews);
-
     return matches.slice(0, MAX_SUGGESTIONS);
   }
 
