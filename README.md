@@ -1,4 +1,4 @@
-# TechMart — Product Explorer
+# E-Store — Product Explorer
 
 Implements **Challenge 3 (Recently Viewed Products)** and **Challenge 7 (Product Autocomplete)**
 from the eCart DSA + UI challenge set. Total: 80 + 140 = **220 marks** (target was 150+).

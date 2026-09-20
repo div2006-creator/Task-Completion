@@ -1,12 +1,8 @@
-/* =========================================================
-   app.js - entry point. Wires DOM events to the two features
-   (Autocomplete, RecentlyViewed) and shared UI renderers.
-   ========================================================= */
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const products = getAllProducts();
 
-  // Elements
   const gridEl = document.getElementById("product-grid");
   const searchInput = document.getElementById("search-input");
   const suggestionList = document.getElementById("suggestion-list");
@@ -19,29 +15,25 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentSuggestions = [];
   let selectedIndex = -1;
 
-  // ---------- initial render ----------
   Autocomplete.buildIndex(products);
   renderProductGrid(products, gridEl);
   renderRecentlyViewed(recentlyViewedList, recentlyViewedEmpty);
 
-  // ---------- view product (shared by grid + history chips + suggestions) ----------
   function viewProduct(productId) {
     const product = products.find((p) => p.id === productId);
-    if (!product) return; // edge case: unknown/removed id
+    if (!product) return;
 
     RecentlyViewed.view(productId);
     renderRecentlyViewed(recentlyViewedList, recentlyViewedEmpty);
     renderModal(modal, product);
   }
 
-  // ---------- product grid: "View Product" (event delegation) ----------
   gridEl.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-product-id]");
     if (!btn) return;
     viewProduct(btn.dataset.productId);
   });
 
-  // ---------- recently viewed chips ----------
   recentlyViewedList.addEventListener("click", (e) => {
     const chip = e.target.closest("[data-product-id]");
     if (!chip) return;
@@ -53,13 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
     renderRecentlyViewed(recentlyViewedList, recentlyViewedEmpty);
   });
 
-  // ---------- modal ----------
   modalClose.addEventListener("click", () => (modal.hidden = true));
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.hidden = true; // click outside content
+    if (e.target === modal) modal.hidden = true;
   });
 
-  // ---------- autocomplete ----------
   function updateSuggestions() {
     const query = searchInput.value;
     currentSuggestions = Autocomplete.search(query);
@@ -103,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     viewProduct(product.id);
   });
 
-  // click outside search -> close suggestions
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".search-box")) {
       suggestionList.hidden = true;

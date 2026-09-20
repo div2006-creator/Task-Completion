@@ -1,8 +1,4 @@
-/* =========================================================
-   ui.js - shared rendering helpers.
-   Keeps "how things look" separate from "how features work"
-   (Student Rule 4).
-   ========================================================= */
+
 
 function formatPrice(value) {
   return "₹" + Number(value).toLocaleString("en-IN");
@@ -14,7 +10,6 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-/** Wraps the portion of `text` matching `query` in <mark>, for autocomplete highlighting. */
 function highlightMatch(text, query) {
   const safeText = escapeHtml(text);
   if (!query) return safeText;
@@ -30,7 +25,6 @@ function renderStars(rating) {
   return `⭐ ${rating.toFixed(1)}`;
 }
 
-/** Builds a product card. `onViewClick` is the productId-aware callback wired in app.js. */
 function renderProductCard(product) {
   const card = document.createElement("div");
   card.className = "product-card";
@@ -57,8 +51,6 @@ function renderProductGrid(products, container) {
   container.appendChild(fragment);
 }
 
-/* ---------- Recently Viewed rendering ---------- */
-
 function renderRecentlyViewed(container, emptyEl) {
   const ids = RecentlyViewed.getHistory();
   container.innerHTML = "";
@@ -81,8 +73,6 @@ function renderRecentlyViewed(container, emptyEl) {
   });
   container.appendChild(fragment);
 }
-
-/* ---------- Autocomplete dropdown rendering ---------- */
 
 function renderSuggestions(listEl, products, query, selectedIndex) {
   listEl.innerHTML = "";
@@ -108,8 +98,6 @@ function renderSuggestions(listEl, products, query, selectedIndex) {
     listEl.appendChild(li);
   });
 }
-
-/* ---------- Product detail modal ---------- */
 
 function renderModal(modalEl, product) {
   modalEl.querySelector(".modal__title").textContent = product.name;

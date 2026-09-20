@@ -1,10 +1,4 @@
-/* =========================================================
-   data.js
-   Provided dataset (unchanged) + one small helper to flatten
-   the nested categories -> subcategories -> products tree
-   into a single flat array, since most features need to
-   search/scan across ALL products regardless of category.
-   ========================================================= */
+
 
 const deliveryNetwork = {
   locations: [
@@ -35,7 +29,7 @@ const deliveryNetwork = {
 };
 
 const storeData = {
-  storeName: "TechMart",
+  storeName: "E-Store",
 
   categories: [
     {
@@ -542,16 +536,6 @@ const storeData = {
   ]
 };
 
-/**
- * Flattens storeData.categories -> subcategories -> products
- * into one array. Almost every feature (search, autocomplete,
- * recently viewed) needs to work across ALL products, so we
- * compute this once and reuse it everywhere instead of
- * re-walking the nested tree on every interaction.
- *
- * Time:  O(n) where n = total number of products
- * Space: O(n) for the returned flat array
- */
 function getAllProducts() {
   const flat = [];
   for (const category of storeData.categories) {
