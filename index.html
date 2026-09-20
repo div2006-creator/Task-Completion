@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechMart · Product Explorer</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <h1 class="logo">TechMart</h1>
+
+    <!-- Challenge 7: Product Autocomplete -->
+    <div class="search-box">
+      <span class="search-box__icon" aria-hidden="true">🔍</span>
+      <input
+        id="search-input"
+        type="text"
+        class="search-box__input"
+        placeholder="Search products, brands, tags..."
+        autocomplete="off"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="suggestion-list"
+      />
+      <ul id="suggestion-list" class="suggestion-list" role="listbox" hidden></ul>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- Challenge 3: Recently Viewed Products -->
+    <section class="recently-viewed" aria-label="Recently viewed products">
+      <div class="recently-viewed__header">
+        <h2>Recently Viewed</h2>
+        <button id="clear-history-btn" class="btn btn--ghost">Clear history</button>
+      </div>
+      <p id="recently-viewed-empty" class="empty-state">You haven't viewed any products yet.</p>
+      <div id="recently-viewed-list" class="recently-viewed__list"></div>
+    </section>
+
+    <section class="catalog" aria-label="All products">
+      <h2>All Products</h2>
+      <div id="product-grid" class="product-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- Product detail modal (opened by "View Product") -->
+  <div id="product-modal" class="modal" hidden>
+    <div class="modal__content">
+      <button id="modal-close" class="modal__close" aria-label="Close">✕</button>
+      <h2 class="modal__title"></h2>
+      <p class="modal__brand"></p>
+      <p class="modal__price"></p>
+      <p class="modal__rating"></p>
+      <ul class="modal__specs"></ul>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/features/recentlyViewed.js"></script>
+  <script src="js/features/autocomplete.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
