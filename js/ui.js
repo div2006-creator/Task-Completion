@@ -1,6 +1,4 @@
-function formatPrice(value) {
-  return "₹" + Number(value).toLocaleString("en-IN");
-}
+const formatPrice = (v) => "₹" + Number(v).toLocaleString("en-IN");
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -13,88 +11,52 @@ function highlightMatch(text, query) {
   if (!query) return safeText;
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
   if (idx === -1) return safeText;
-  const before = escapeHtml(text.slice(0, idx));
-  const match = escapeHtml(text.slice(idx, idx + query.length));
-  const after = escapeHtml(text.slice(idx + query.length));
-  return `${before}<mark>${match}</mark>${after}`;
+  return `${escapeHtml(text.slice(0, idx))}<mark>${escapeHtml(text.slice(idx, idx + query.length))}</mark>${escapeHtml(text.slice(idx + query.length))}`;
 }
 
-function renderStars(rating) {
-  return `⭐ ${rating.toFixed(1)}`;
-}
-
-function renderProductCard(product) {
-  const card = document.createElement("div");
-  card.className = "product-card";
-  card.innerHTML = `
-    <div class="product-card__body">
-      <h3 class="product-card__name">${escapeHtml(product.name)}</h3>
-      <p class="product-card__brand">${escapeHtml(product.brand)}</p>
-      <p class="product-card__price">${formatPrice(product.price)}</p>
-      <p class="product-card__rating">${renderStars(product.rating)} &middot; ${product.reviews} reviews</p>
-      <button class="btn btn--view" data-product-id="${product.id}">View Product</button>
-    </div>
-  `;
-  return card;
-}
+const renderStars = (rating) => `⭐ ${rating.toFixed(1)}`;
 
 function renderProductGrid(products, container) {
-  container.innerHTML = "";
   if (!products.length) {
     container.innerHTML = `<p class="empty-state">No products found.</p>`;
     return;
   }
-  const fragment = document.createDocumentFragment();
-  products.forEach((p) => fragment.appendChild(renderProductCard(p)));
-  container.appendChild(fragment);
+  container.innerHTML = products.map((p) => `
+    <div class="product-card">
+      <div class="product-card__body">
+        <h3 class="product-card__name">${escapeHtml(p.name)}</h3>
+        <p class="product-card__brand">${escapeHtml(p.brand)}</p>
+        <p class="product-card__price">${formatPrice(p.price)}</p>
+        <p class="product-card__rating">${renderStars(p.rating)} &middot; ${p.reviews} reviews</p>
+        <button class="btn btn--view" data-product-id="${p.id}">View Product</button>
+      </div>
+    </div>
+  `).join("");
 }
 
 function renderRecentlyViewed(container, emptyEl) {
   const ids = RecentlyViewed.getHistory();
-  container.innerHTML = "";
-
-  if (!ids.length) {
-    emptyEl.hidden = false;
-    return;
-  }
-  emptyEl.hidden = true;
-
-  const fragment = document.createDocumentFragment();
-  ids.forEach((id) => {
-    const product = getAllProducts().find((p) => p.id === id);
-    if (!product) return;
-    const chip = document.createElement("button");
-    chip.className = "history-chip";
-    chip.dataset.productId = product.id;
-    chip.textContent = product.name;
-    fragment.appendChild(chip);
-  });
-  container.appendChild(fragment);
+  const allProducts = getAllProducts();
+  emptyEl.hidden = ids.length > 0;
+  container.innerHTML = ids
+    .map((id) => allProducts.find((p) => p.id === id))
+    .filter(Boolean)
+    .map((p) => `<button class="history-chip" data-product-id="${p.id}">${escapeHtml(p.name)}</button>`)
+    .join("");
 }
 
 function renderSuggestions(listEl, products, query, selectedIndex) {
-  listEl.innerHTML = "";
-
-  if (!query.trim()) {
-    listEl.hidden = true;
-    return;
-  }
-
+  if (!query.trim()) return (listEl.hidden = true);
+  listEl.hidden = false;
   if (!products.length) {
-    listEl.hidden = false;
     listEl.innerHTML = `<li class="suggestion suggestion--empty">No products found.</li>`;
     return;
   }
-
-  listEl.hidden = false;
-  products.forEach((product, i) => {
-    const li = document.createElement("li");
-    li.className = "suggestion" + (i === selectedIndex ? " suggestion--active" : "");
-    li.dataset.productId = product.id;
-    li.setAttribute("role", "option");
-    li.innerHTML = `${highlightMatch(product.name, query)} <span class="suggestion__brand">${escapeHtml(product.brand)}</span>`;
-    listEl.appendChild(li);
-  });
+  listEl.innerHTML = products.map((p, i) => `
+    <li class="suggestion${i === selectedIndex ? " suggestion--active" : ""}" data-product-id="${p.id}" role="option">
+      ${highlightMatch(p.name, query)} <span class="suggestion__brand">${escapeHtml(p.brand)}</span>
+    </li>
+  `).join("");
 }
 
 function renderModal(modalEl, product) {
@@ -102,14 +64,8 @@ function renderModal(modalEl, product) {
   modalEl.querySelector(".modal__brand").textContent = product.brand;
   modalEl.querySelector(".modal__price").textContent = formatPrice(product.price);
   modalEl.querySelector(".modal__rating").textContent = `${renderStars(product.rating)} · ${product.reviews} reviews · ${product.stock} in stock`;
-
-  const specsEl = modalEl.querySelector(".modal__specs");
-  specsEl.innerHTML = "";
-  Object.entries(product.specifications || {}).forEach(([key, value]) => {
-    const row = document.createElement("li");
-    row.innerHTML = `<strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}`;
-    specsEl.appendChild(row);
-  });
-
+  modalEl.querySelector(".modal__specs").innerHTML = Object.entries(product.specifications || {})
+    .map(([k, v]) => `<li><strong>${escapeHtml(k)}:</strong> ${escapeHtml(String(v))}</li>`)
+    .join("");
   modalEl.hidden = false;
 }

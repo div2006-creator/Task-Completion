@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const products = getAllProducts();
-
   const gridEl = document.getElementById("product-grid");
   const searchInput = document.getElementById("search-input");
   const suggestionList = document.getElementById("suggestion-list");
@@ -17,11 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
   renderProductGrid(products, gridEl);
   renderRecentlyViewed(recentlyViewedList, recentlyViewedEmpty);
 
-  function viewProduct(productId) {
-    const product = products.find((p) => p.id === productId);
+  function viewProduct(id) {
+    const product = products.find((p) => p.id === id);
     if (!product) return;
-
-    RecentlyViewed.view(productId);
+    RecentlyViewed.view(id);
     renderRecentlyViewed(recentlyViewedList, recentlyViewedEmpty);
     renderModal(modal, product);
   }
@@ -42,9 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   modalClose.addEventListener("click", () => (modal.hidden = true));
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.hidden = true;
-  });
+  modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
 
   function updateSuggestions() {
     const query = searchInput.value;
@@ -57,14 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   searchInput.addEventListener("keydown", (e) => {
     if (suggestionList.hidden || !currentSuggestions.length) return;
-
+    const len = currentSuggestions.length;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      selectedIndex = (selectedIndex + 1) % currentSuggestions.length;
+      selectedIndex = (selectedIndex + 1) % len;
       renderSuggestions(suggestionList, currentSuggestions, searchInput.value, selectedIndex);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      selectedIndex = (selectedIndex - 1 + currentSuggestions.length) % currentSuggestions.length;
+      selectedIndex = (selectedIndex - 1 + len) % len;
       renderSuggestions(suggestionList, currentSuggestions, searchInput.value, selectedIndex);
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -92,8 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".search-box")) {
-      suggestionList.hidden = true;
-    }
+    if (!e.target.closest(".search-box")) suggestionList.hidden = true;
   });
 });
